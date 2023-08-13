@@ -130,7 +130,10 @@ class HashMap:
         """
         TODO: Write this implementation
         """
-        pass
+        self._buckets = DynamicArray()
+
+        for _ in range(self._capacity):
+            self._buckets.append(LinkedList())
 
     def resize_table(self, new_capacity: int) -> None:
         """
@@ -154,8 +157,6 @@ class HashMap:
         for index in range(length):
             key, value = values[index]
             self.put(key, value)
-
-
 
     def get(self, key: str):
         """
@@ -199,7 +200,6 @@ class HashMap:
         if l_list.remove(key):
             self._size -= 1
 
-
     def get_keys_and_values(self) -> DynamicArray:
         """
         TODO: Write this implementation
@@ -213,8 +213,6 @@ class HashMap:
 
         return key_arr
 
-
-
 def find_mode(da: DynamicArray) -> tuple[DynamicArray, int]:
     """
     TODO: Write this implementation
@@ -222,6 +220,36 @@ def find_mode(da: DynamicArray) -> tuple[DynamicArray, int]:
     # if you'd like to use a hash map,
     # use this instance of your Separate Chaining HashMap
     map = HashMap()
+    mode_values = DynamicArray()
+    mode_frequency = 0
+
+    for index in range(da.length()):
+        key = da[index]
+
+        if not map.contains_key(key):
+            map.put(key, 1)
+            if mode_frequency == 0:
+                mode_values.append(key)
+                mode_frequency += 1
+
+            elif mode_frequency == 1:
+                mode_values.append(key)
+
+        else:
+            frequency = map.get(key) + 1
+            map.put(key, frequency)
+            if frequency > mode_frequency:
+                mode_values = DynamicArray()
+                mode_values.append(key)
+                mode_frequency = frequency
+
+            elif frequency == mode_frequency:
+                mode_values.append(key)
+
+    return mode_values, mode_frequency
+
+
+
 
 
 # ------------------- BASIC TESTING ---------------------------------------- #
