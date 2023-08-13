@@ -210,7 +210,7 @@ class HashMap:
         entry = self._buckets[index]
 
         while entry is not None and entry.key != key:
-            index = (index + next ** 2) % self._capacity
+            index = (index + (next ** 2)) % self._capacity
             entry = self._buckets[index]
             next += 1
 
@@ -228,6 +228,8 @@ class HashMap:
 
         for _ in range(self._capacity):
             self._buckets.append(None)
+
+        self._size = 0
 
     def get_keys_and_values(self) -> DynamicArray:
         """
