@@ -135,6 +135,8 @@ class HashMap:
         for _ in range(self._capacity):
             self._buckets.append(LinkedList())
 
+        self._size = 0
+
     def resize_table(self, new_capacity: int) -> None:
         """
         TODO: Write this implementation
