@@ -1,9 +1,10 @@
-# Name:
-# OSU Email:
+# Name: Paige Knickerbocker
+# OSU Email: knickerp@oregonstate.edu
 # Course: CS261 - Data Structures
-# Assignment:
-# Due Date:
-# Description:
+# Assignment: 6
+# Due Date: 08-15-2023
+# Description: Implementation of hashmap using dynamic array and chaining
+# for collision resolution
 
 
 from a6_include import (DynamicArray, LinkedList,
@@ -90,29 +91,40 @@ class HashMap:
 
     def put(self, key: str, value: object) -> None:
         """
-        TODO: Write this implementation
+        Adds key/value pair to map. If map already contains key,
+        updates value of key.
+        :param key: string representing key
+        :param value: value to be added/updated
+        :return: none
         """
+        # double size if table load >= 1
         if self.table_load() >= 1:
             self.resize_table(self._capacity*2)
 
+        # find location of key
         hash = self._hash_function(key)
         index = hash % self._capacity
         index_lst = self._buckets[index]
         node = index_lst.contains(key)
 
+        # map does not contain key
         if node is None:
             index_lst.insert(key, value)
             self._size += 1
 
+        # map contains key
         else:
             node.value = value
 
 
     def empty_buckets(self) -> int:
         """
-        TODO: Write this implementation
+        Returns number of empty buckets in map
+        :return: integer value of empty buckets
         """
         empty = 0
+
+        # check length of list at each index in map
         for index in range(self._capacity):
             l_list = self._buckets[index]
             if l_list.length() == 0:
@@ -122,13 +134,15 @@ class HashMap:
 
     def table_load(self) -> float:
         """
-        TODO: Write this implementation
+        Returns the hash table load factor.
+        :return: float representing load factor
         """
         return self._size / self._capacity
 
     def clear(self) -> None:
         """
-        TODO: Write this implementation
+        Empties buckets while maintaining capacity.
+        :return: none
         """
         self._buckets = DynamicArray()
 
@@ -139,7 +153,10 @@ class HashMap:
 
     def resize_table(self, new_capacity: int) -> None:
         """
-        TODO: Write this implementation
+        Resizes map to new capacity or closest prime number if
+        not prime.
+        :param new_capacity: integer representing new capacity
+        :return: none
         """
         if new_capacity < 1:
             return
@@ -147,14 +164,18 @@ class HashMap:
         if not self._is_prime(new_capacity):
             new_capacity = self._next_prime(new_capacity)
 
+        # store values of current map
         values = self.get_keys_and_values()
+
+        # create new map with new capacity
         self._capacity = new_capacity
         self._buckets = DynamicArray()
         self._size = 0
 
         for _ in range(self._capacity):
             self._buckets.append(LinkedList())
-        
+
+        # add values to new map
         length = values.length()
         for index in range(length):
             key, value = values[index]
@@ -162,52 +183,67 @@ class HashMap:
 
     def get(self, key: str):
         """
-        TODO: Write this implementation
+        Returns the value corresponding to the given key
+        :param key: string representing key
+        :return: value if key found, none if not found
         """
+        # find location of key
         hash = self._hash_function(key)
         index = hash % self._capacity
 
         l_list = self._buckets[index]
-
         node = l_list.contains(key)
 
+        # key found
         if node:
             return node.value
 
+        # key not found
         return None
 
     def contains_key(self, key: str) -> bool:
         """
-        TODO: Write this implementation
+        Checks if key is found in map.
+        :param key: string representing key to be found
+        :return: true if map contains key, false if not
         """
+        # find location of key
         hash = self._hash_function(key)
         index = hash % self._capacity
 
         l_list = self._buckets[index]
 
+        # does not contain key
         if l_list.contains(key) is None:
             return False
 
+        # contains key
         return True
 
     def remove(self, key: str) -> None:
         """
-        TODO: Write this implementation
+        Removes node corresponding to key from map.
+        :param key: key corresponding to node to be removed
+        :return: none
         """
+        # find location of node
         hash = self._hash_function(key)
         index = hash % self._capacity
 
         l_list = self._buckets[index]
 
+        # remove node if present
         if l_list.remove(key):
             self._size -= 1
 
     def get_keys_and_values(self) -> DynamicArray:
         """
-        TODO: Write this implementation
+        Returns Dynamic Array containing all key/value pairs in map
+        :return: Dynamic Array containing tuples
         """
         key_arr = DynamicArray()
 
+        # iterate through each list in map and add value to array
         for index in range(0, self._capacity, 1):
             l_list = self._buckets[index]
             for node in l_list:
@@ -217,10 +253,10 @@ class HashMap:
 
 def find_mode(da: DynamicArray) -> tuple[DynamicArray, int]:
     """
-    TODO: Write this implementation
+    Finds the mode value(s) of unsorted Dynamic Array.
+    :param da: Dynamic Array
+    :return: tuple containing Dynamic Array of value(s) and frequency
     """
-    # if you'd like to use a hash map,
-    # use this instance of your Separate Chaining HashMap
     map = HashMap()
     mode_values = DynamicArray()
     mode_frequency = 0
@@ -228,30 +264,37 @@ def find_mode(da: DynamicArray) -> tuple[DynamicArray, int]:
     for index in range(da.length()):
         key = da[index]
 
+        # value has not yet been added to map
         if not map.contains_key(key):
+            # add to map
             map.put(key, 1)
+
+            # first value added to map
             if mode_frequency == 0:
                 mode_values.append(key)
                 mode_frequency += 1
 
+            # frequency = mode frequency
             elif mode_frequency == 1:
                 mode_values.append(key)
 
+        # value has been added to map
         else:
+            # update frequency of value
             frequency = map.get(key) + 1
             map.put(key, frequency)
+
+            # frequency greater than current mode frequency
             if frequency > mode_frequency:
                 mode_values = DynamicArray()
                 mode_values.append(key)
                 mode_frequency = frequency
 
+            # frequency same as current mode frequency
             elif frequency == mode_frequency:
                 mode_values.append(key)
 
     return mode_values, mode_frequency
-
-
-
 
 
 # ------------------- BASIC TESTING ---------------------------------------- #
