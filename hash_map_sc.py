@@ -196,9 +196,8 @@ class HashMap:
 
         l_list = self._buckets[index]
 
-        l_list.remove(key)
-
-        self._size -= 1
+        if l_list.remove(key):
+            self._size -= 1
 
 
     def get_keys_and_values(self) -> DynamicArray:
