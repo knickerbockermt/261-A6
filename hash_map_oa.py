@@ -94,16 +94,20 @@ class HashMap:
 
         # find location of key
         hash = self._hash_function(key)
-        index = hash % self._capacity
+        index_initial = hash % self._capacity
+        index = None
         next = 1
 
-        entry = self._buckets[index]
+        entry = self._buckets[index_initial]
 
         while entry is not None and entry.key != key\
                 and entry.is_tombstone is False:
-            index = (index + next**2) % self._capacity
+            index = (index_initial + next**2) % self._capacity
             entry = self._buckets[index]
             next += 1
+
+        if index is None:
+            index = index_initial
 
         if entry is None or entry.is_tombstone:
             self._buckets[index] = HashEntry(key, value)
@@ -111,7 +115,6 @@ class HashMap:
 
         else:
             entry.value = value
-
 
 
     def table_load(self) -> float:
@@ -164,15 +167,20 @@ class HashMap:
         TODO: Write this implementation
         """
         hash = self._hash_function(key)
-        index = hash % self._capacity
+        index_initial = hash % self._capacity
+        index = None
         next = 1
 
-        entry = self._buckets[index]
+        entry = self._buckets[index_initial]
 
-        while entry is not None and entry.key != key:
-            index = (index + next ** 2) % self._capacity
+        while entry is not None and entry.key != key \
+                and entry.is_tombstone is False:
+            index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
+
+        if index is None:
+            index = index_initial
 
         if entry is None or entry.is_tombstone:
             return None
@@ -184,15 +192,20 @@ class HashMap:
         TODO: Write this implementation
         """
         hash = self._hash_function(key)
-        index = hash % self._capacity
+        index_initial = hash % self._capacity
+        index = None
         next = 1
 
-        entry = self._buckets[index]
+        entry = self._buckets[index_initial]
 
-        while entry is not None and entry.key != key:
-            index = (index + next ** 2) % self._capacity
+        while entry is not None and entry.key != key \
+                and entry.is_tombstone is False:
+            index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
+
+        if index is None:
+            index = index_initial
 
         if entry is None or entry.is_tombstone:
             return False
@@ -204,15 +217,20 @@ class HashMap:
         TODO: Write this implementation
         """
         hash = self._hash_function(key)
-        index = hash % self._capacity
+        index_initial = hash % self._capacity
+        index = None
         next = 1
 
-        entry = self._buckets[index]
+        entry = self._buckets[index_initial]
 
-        while entry is not None and entry.key != key:
-            index = (index + (next ** 2)) % self._capacity
+        while entry is not None and entry.key != key \
+                and entry.is_tombstone is False:
+            index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
+
+        if index is None:
+            index = index_initial
 
         if entry is None or entry.is_tombstone:
             return
