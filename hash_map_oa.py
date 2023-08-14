@@ -272,10 +272,11 @@ class HashMap:
         if self._index >= self._capacity:
             raise StopIteration
 
-        value = self._buckets[self._index]
+        entry = self._buckets[self._index]
         self._index += 1
 
-        return value
+        if entry is not None and not entry.is_tombstone:
+            return entry
 
 
 # ------------------- BASIC TESTING ---------------------------------------- #
