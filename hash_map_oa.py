@@ -173,8 +173,7 @@ class HashMap:
 
         entry = self._buckets[index_initial]
 
-        while entry is not None and entry.key != key \
-                and entry.is_tombstone is False:
+        while entry is not None and entry.key != key:
             index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
@@ -198,8 +197,7 @@ class HashMap:
 
         entry = self._buckets[index_initial]
 
-        while entry is not None and entry.key != key \
-                and entry.is_tombstone is False:
+        while entry is not None and entry.key != key:
             index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
@@ -223,14 +221,10 @@ class HashMap:
 
         entry = self._buckets[index_initial]
 
-        while entry is not None and entry.key != key \
-                and entry.is_tombstone is False:
+        while entry is not None and entry.key != key:
             index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
-
-        if index is None:
-            index = index_initial
 
         if entry is None or entry.is_tombstone:
             return
