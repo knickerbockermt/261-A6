@@ -1,9 +1,10 @@
-# Name:
-# OSU Email:
+# Name: Paige Knickerbocker
+# OSU Email: knickerp@oregonstate.edu
 # Course: CS261 - Data Structures
-# Assignment:
-# Due Date:
-# Description:
+# Assignment: 6
+# Due Date: 08-15-2023
+# Description: Implementation of hashmap using dynamic array and open addressing
+# with quadratic probing for collision resolution
 
 from a6_include import (DynamicArray, DynamicArrayException, HashEntry,
                         hash_function_1, hash_function_2)
@@ -87,48 +88,60 @@ class HashMap:
 
     def put(self, key: str, value: object) -> None:
         """
-        TODO: Write this implementation
+        Adds key/value pair to map. If map already contains key,
+        updates value of key.
+        :param key: string representing key
+        :param value: value to be added/updated
+        :return: none
         """
+        # resize if load factor >= .5
         if self.table_load() >= .5:
             self.resize_table(self._capacity * 2)
 
-        # find location of key
+        # find initial index
         hash = self._hash_function(key)
         index_initial = hash % self._capacity
+        entry = self._buckets[index_initial]
+
         index = None
         next = 1
 
-        entry = self._buckets[index_initial]
-
+        # use quadratic programing to find valid index
         while entry is not None and entry.key != key\
                 and entry.is_tombstone is False:
             index = (index_initial + next**2) % self._capacity
             entry = self._buckets[index]
             next += 1
 
+        # no probing needed
         if index is None:
             index = index_initial
 
+        # key not in map, make new entry
         if entry is None or entry.is_tombstone:
             self._buckets[index] = HashEntry(key, value)
             self._size += 1
 
+        # key in map, update value
         else:
             entry.value = value
 
 
     def table_load(self) -> float:
         """
-        TODO: Write this implementation
+        Returns the hash table load factor.
+        :return: float representing load factor
         """
         return self._size / self._capacity
 
     def empty_buckets(self) -> int:
         """
-        TODO: Write this implementation
+        Returns number of empty buckets in map
+        :return: integer value of empty buckets
         """
         empty = 0
 
+        # add empty buckets to count
         for index in range(self._capacity):
             if self._buckets[index] is None:
                 empty += 1
@@ -137,7 +150,10 @@ class HashMap:
 
     def resize_table(self, new_capacity: int) -> None:
         """
-        TODO: Write this implementation
+        Resizes map to new capacity or closest prime number if
+        not prime.
+        :param new_capacity: integer representing new capacity
+        :return: none
         """
         if new_capacity < self._size:
             return
@@ -164,77 +180,87 @@ class HashMap:
 
     def get(self, key: str) -> object:
         """
-        TODO: Write this implementation
+        Returns the value corresponding to the given key
+        :param key: string representing key
+        :return: value if key found, none if not found
         """
+        # find initial index of key
         hash = self._hash_function(key)
         index_initial = hash % self._capacity
-        index = None
-        next = 1
-
         entry = self._buckets[index_initial]
 
+        next = 1
+
+        # use quadratic probing to find key if necessary
         while entry is not None and entry.key != key:
             index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
 
-        if index is None:
-            index = index_initial
-
+        # key not in map
         if entry is None or entry.is_tombstone:
             return None
 
+        # key in map
         return entry.value
 
     def contains_key(self, key: str) -> bool:
         """
-        TODO: Write this implementation
+        Checks if key is found in map.
+        :param key: string representing key to be found
+        :return: true if map contains key, false if not
         """
+        # find initial index of key
         hash = self._hash_function(key)
         index_initial = hash % self._capacity
-        index = None
-        next = 1
-
         entry = self._buckets[index_initial]
 
+        next = 1
+
+        # use quadratic probing if necessary
         while entry is not None and entry.key != key:
             index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
 
-        if index is None:
-            index = index_initial
-
+        # key not in map
         if entry is None or entry.is_tombstone:
             return False
 
+        # key in map
         return True
 
     def remove(self, key: str) -> None:
         """
-        TODO: Write this implementation
+        Removes node corresponding to key from map.
+        :param key: key corresponding to node to be removed
+        :return: none
         """
+        # find initial index
         hash = self._hash_function(key)
         index_initial = hash % self._capacity
-        index = None
-        next = 1
-
         entry = self._buckets[index_initial]
 
+        next = 1
+
+        # use quadratic probing as necessary
         while entry is not None and entry.key != key:
             index = (index_initial + next ** 2) % self._capacity
             entry = self._buckets[index]
             next += 1
 
+        # key not in map
         if entry is None or entry.is_tombstone:
             return
 
+        # key in map
         entry.is_tombstone = True
         self._size -= 1
 
     def clear(self) -> None:
         """
-        TODO: Write this implementation
+        Empties buckets while maintaining capacity.
+        :return: none
         """
         self._buckets = DynamicArray()
 
@@ -245,7 +271,8 @@ class HashMap:
 
     def get_keys_and_values(self) -> DynamicArray:
         """
-        TODO: Write this implementation
+        Returns Dynamic Array containing all key/value pairs in map
+        :return: Dynamic Array containing tuples
         """
         key_arr = DynamicArray()
 
@@ -259,7 +286,8 @@ class HashMap:
 
     def __iter__(self):
         """
-        TODO: Write this implementation
+        Create iterator for loop
+        :return: self
         """
         self._index = 0
 
@@ -267,13 +295,16 @@ class HashMap:
 
     def __next__(self):
         """
-        TODO: Write this implementation
+        Iterate through array and return valid entries
+        :return: valid entries
         """
+        # check if index is within range
         try:
             entry = self._buckets[self._index]
         except DynamicArrayException:
             raise StopIteration
 
+        # find next valid index
         while entry is None or entry.is_tombstone is True:
             self._index += 1
             if self._index >= self._capacity:
@@ -281,6 +312,8 @@ class HashMap:
             entry = self._buckets[self._index]
 
         self._index += 1
+
+        # return valid entry
         return entry
 
 
