@@ -252,7 +252,7 @@ class HashMap:
         # iterate through each list in map and add value to array
         for index in range(self._capacity):
             entry = self._buckets[index]
-            if entry is not None:
+            if entry is not None and not entry.is_tombstone:
                 key_arr.append((entry.key, entry.value))
 
         return key_arr
@@ -261,13 +261,21 @@ class HashMap:
         """
         TODO: Write this implementation
         """
-        pass
+        self._index = 0
+
+        return self
 
     def __next__(self):
         """
         TODO: Write this implementation
         """
-        pass
+        if self._index >= self._capacity:
+            raise StopIteration
+
+        value = self._buckets[self._index]
+        self._index += 1
+
+        return value
 
 
 # ------------------- BASIC TESTING ---------------------------------------- #
