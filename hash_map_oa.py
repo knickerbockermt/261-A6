@@ -269,14 +269,20 @@ class HashMap:
         """
         TODO: Write this implementation
         """
-        if self._index >= self._capacity:
+        try:
+            entry = self._buckets[self._index]
+        except DynamicArrayException:
             raise StopIteration
 
-        entry = self._buckets[self._index]
-        self._index += 1
+        while entry is None or entry.is_tombstone is True:
+            self._index += 1
+            if self._index >= self._capacity:
+                raise StopIteration
+            entry = self._buckets[self._index]
 
-        if entry is not None and not entry.is_tombstone:
-            return entry
+        self._index += 1
+        return entry
+
 
 
 # ------------------- BASIC TESTING ---------------------------------------- #
