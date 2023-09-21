@@ -1,4 +1,4 @@
-# 261-A6
+# Hash Map Implementations using Open Addressing and Chaining
 
 This project consists of two implementations of a hash map, one using open addressing and one using chaining, both using dynamic arrays.  Initial methods were provided by the instructors.
 
